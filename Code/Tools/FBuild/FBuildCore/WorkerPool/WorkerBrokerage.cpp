@@ -333,7 +333,7 @@ void WorkerBrokerage::SetAvailability( bool available )
     InitBrokerage();
 
     // ignore if brokerage not configured
-    if ( m_BrokerageRoots.IsEmpty() )
+    if ( m_BrokerageRoots.IsEmpty() && m_CoordinatorAddress.IsEmpty() )
     {
         return;
     }
@@ -448,15 +448,18 @@ void WorkerBrokerage::SetAvailability( bool available )
                         case WorkerSettings::PROPORTIONAL:  buffer += "Mode: proportional\n"; break;
                     }
 
-                    // Create/write file which signifies availability
-                    FileIO::EnsurePathExists( m_BrokerageRoots[0] );
-                    FileStream fs;
-                    if ( fs.Open( m_BrokerageFilePath.Get(), FileStream::WRITE_ONLY ) )
+                    if (!m_BrokerageRoots.IsEmpty())
                     {
-                        fs.WriteBuffer( buffer.Get(), buffer.GetLength() );
+                        // Create/write file which signifies availability
+                        FileIO::EnsurePathExists(m_BrokerageRoots[0]);
+                        FileStream fs;
+                        if (fs.Open(m_BrokerageFilePath.Get(), FileStream::WRITE_ONLY))
+                        {
+                            fs.WriteBuffer(buffer.Get(), buffer.GetLength());
 
-                        // Take note of time we wrote the settings
-                        m_SettingsWriteTime = settingsWriteTime;
+                            // Take note of time we wrote the settings
+                            m_SettingsWriteTime = settingsWriteTime;
+                        }
                     }
                 }
             }
@@ -484,7 +487,7 @@ void WorkerBrokerage::SetAvailability( bool available )
     m_Availability = available;
     
     // Handle brokerage cleaning
-    if ( m_TimerLastCleanBroker.GetElapsed() >= sBrokerageElapsedTimeBetweenClean )
+    if (m_CoordinatorAddress.IsEmpty() && m_TimerLastCleanBroker.GetElapsed() >= sBrokerageElapsedTimeBetweenClean )
     {
         const uint64_t fileTimeNow = Time::FileTimeToSeconds( Time::GetCurrentFileTime() );
 
