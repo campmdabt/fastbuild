@@ -4,7 +4,7 @@
 // Includes
 //------------------------------------------------------------------------------
 #include "WorkerConnectionPool.h"
-#include "WorkerBrokerage.h"
+#include "WorkerBrokerageClient.h"
 
 // FBuild
 #include "Tools/FBuild/FBuildCore/Protocol/Protocol.h"
@@ -160,7 +160,7 @@ void WorkerConnectionPool::Process( const ConnectionInfo * connection, const Pro
         workers.Append( workerAddress );
     }
 
-    WorkerBrokerage * brokerage = ( WorkerBrokerage *)connection->GetUserData();
+    WorkerBrokerageClient * brokerage = ( WorkerBrokerageClient *)connection->GetUserData();
     ASSERT( brokerage );
     brokerage->UpdateWorkerList( workers );
 }

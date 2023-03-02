@@ -19,6 +19,11 @@ public:
     ~WorkerBrokerageClient();
 
     void FindWorkers( Array< AString > & outWorkerList );
+    void UpdateWorkerList( Array< uint32_t > &workerListUpdate );
+
+protected:
+    Array< uint32_t >   m_WorkerListUpdate;
+    bool                m_WorkerListUpdateReady;
 };
 
 //------------------------------------------------------------------------------

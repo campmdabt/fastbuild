@@ -23,8 +23,6 @@ public:
 
     void SetAvailability( bool available );
 
-    const AString & GetHostName() const { return m_HostName; }
-
 protected:
     void UpdateBrokerageFilePath();
 
@@ -36,7 +34,6 @@ protected:
     AString             m_BrokerageFilePath;
     AString             m_IPAddress;
     AString             m_DomainName;
-    AString             m_HostName;
 };
 
 //------------------------------------------------------------------------------
