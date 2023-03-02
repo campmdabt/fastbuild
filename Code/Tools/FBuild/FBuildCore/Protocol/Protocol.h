@@ -59,9 +59,9 @@ namespace Protocol
 
         MSG_JOB_RESULT_COMPRESSED   = 11, // Server -> Client : Return completed job (compressed)
 
-        MSG_REQUEST_WORKER_LIST = 11,// Client -> Coordinator : Ask coordinator for the list of workers
-        MSG_WORKER_LIST         = 12,// Client <- Coordinator : Respond with the list of workers
-        MSG_SET_WORKER_STATUS   = 13,// Server -> Coordinator : Sets worker status (available or unavailable)
+        MSG_REQUEST_WORKER_LIST = 12,// Client -> Coordinator : Ask coordinator for the list of workers
+        MSG_WORKER_LIST         = 13,// Client <- Coordinator : Respond with the list of workers
+        MSG_SET_WORKER_STATUS   = 14,// Server -> Coordinator : Sets worker status (available or unavailable)
 
         NUM_MESSAGES            // leave last
     };
