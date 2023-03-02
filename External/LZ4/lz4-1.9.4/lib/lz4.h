@@ -130,11 +130,7 @@ extern "C" {
 /*------   Version   ------*/
 #define LZ4_VERSION_MAJOR    1    /* for breaking interface changes  */
 #define LZ4_VERSION_MINOR    9    /* for new (non-breaking) interface capabilities */
-<<<<<<<< HEAD:External/LZ4/lz4-1.9.4/lib/lz4.h
 #define LZ4_VERSION_RELEASE  4    /* for tweaks, bug-fixes, or development */
-========
-#define LZ4_VERSION_RELEASE  3    /* for tweaks, bug-fixes, or development */
->>>>>>>> Source/main:External/LZ4/lz4-1.9.3/lib/lz4.h
 
 #define LZ4_VERSION_NUMBER (LZ4_VERSION_MAJOR *100*100 + LZ4_VERSION_MINOR *100 + LZ4_VERSION_RELEASE)
 
@@ -672,26 +668,7 @@ LZ4_attach_dictionary(LZ4_stream_t* workingStream,
   typedef unsigned int   LZ4_u32;
 #endif
 
-typedef struct LZ4_stream_t_internal LZ4_stream_t_internal;
-struct LZ4_stream_t_internal {
-    LZ4_u32 hashTable[LZ4_HASH_SIZE_U32];
-    LZ4_u32 currentOffset;
-    LZ4_u32 tableType;
-    const LZ4_byte* dictionary;
-    const LZ4_stream_t_internal* dictCtx;
-    LZ4_u32 dictSize;
-};
-
-typedef struct {
-    const LZ4_byte* externalDict;
-    size_t extDictSize;
-    const LZ4_byte* prefixEnd;
-    size_t prefixSize;
-} LZ4_streamDecode_t_internal;
-
-
 /*! LZ4_stream_t :
-<<<<<<<< HEAD:External/LZ4/lz4-1.9.4/lib/lz4.h
  *  Never ever use below internal definitions directly !
  *  These definitions are not API/ABI safe, and may change in future versions.
  *  If you need static allocation, declare or allocate an LZ4_stream_t object.
@@ -711,21 +688,6 @@ struct LZ4_stream_t_internal {
 #define LZ4_STREAM_MINSIZE  ((1UL << LZ4_MEMORY_USAGE) + 32)  /* static size, for inter-version compatibility */
 union LZ4_stream_u {
     char minStateSize[LZ4_STREAM_MINSIZE];
-========
- *  Do not use below internal definitions directly !
- *  Declare or allocate an LZ4_stream_t instead.
- *  LZ4_stream_t can also be created using LZ4_createStream(), which is recommended.
- *  The structure definition can be convenient for static allocation
- *  (on stack, or as part of larger structure).
- *  Init this structure with LZ4_initStream() before first use.
- *  note : only use this definition in association with static linking !
- *  this definition is not API/ABI safe, and may change in future versions.
- */
-#define LZ4_STREAMSIZE       16416  /* static size, for inter-version compatibility */
-#define LZ4_STREAMSIZE_VOIDP (LZ4_STREAMSIZE / sizeof(void*))
-union LZ4_stream_u {
-    void* table[LZ4_STREAMSIZE_VOIDP];
->>>>>>>> Source/main:External/LZ4/lz4-1.9.3/lib/lz4.h
     LZ4_stream_t_internal internal_donotuse;
 }; /* previously typedef'd to LZ4_stream_t */
 

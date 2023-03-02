@@ -54,11 +54,7 @@ it's necessary to include all `*.c` and `*.h` files from `lib/` directory.
 
 Definitions which are not guaranteed to remain stable in future versions,
 are protected behind macros, such as `LZ4_STATIC_LINKING_ONLY`.
-<<<<<<<< HEAD:External/LZ4/lz4-1.9.4/lib/README.md
 As the name suggests, these definitions should only be invoked
-========
-As the name strongly implies, these definitions should only be invoked
->>>>>>>> Source/main:External/LZ4/lz4-1.9.3/lib/README.md
 in the context of static linking ***only***.
 Otherwise, dependent application may fail on API or ABI break in the future.
 The associated symbols are also not exposed by the dynamic library by default.
@@ -92,29 +88,17 @@ The following build macro can be selected to adjust source code behavior at comp
   This build macro offers another project-specific method
   by defining `LZ4_DISABLE_DEPRECATE_WARNINGS` before including the LZ4 header files.
 
-<<<<<<<< HEAD:External/LZ4/lz4-1.9.4/lib/README.md
-========
-- `LZ4_USER_MEMORY_FUNCTIONS` : replace calls to <stdlib>'s `malloc`, `calloc` and `free`
-  by user-defined functions, which must be called `LZ4_malloc()`, `LZ4_calloc()` and `LZ4_free()`.
-  User functions must be available at link time.
-
->>>>>>>> Source/main:External/LZ4/lz4-1.9.3/lib/README.md
 - `LZ4_FORCE_SW_BITCOUNT` : by default, the compression algorithm tries to determine lengths
   by using bitcount instructions, generally implemented as fast single instructions in many cpus.
   In case the target cpus doesn't support it, or compiler intrinsic doesn't work, or feature bad performance,
   it's possible to use an optimized software path instead.
-<<<<<<<< HEAD:External/LZ4/lz4-1.9.4/lib/README.md
   This is achieved by setting this build macros.
-========
-  This is achieved by setting this build macros .
->>>>>>>> Source/main:External/LZ4/lz4-1.9.3/lib/README.md
   In most cases, it's not expected to be necessary,
   but it can be legitimately considered for less common platforms.
 
 - `LZ4_ALIGN_TEST` : alignment test ensures that the memory area
   passed as argument to become a compression state is suitably aligned.
   This test can be disabled if it proves flaky, by setting this value to 0.
-<<<<<<<< HEAD:External/LZ4/lz4-1.9.4/lib/README.md
 
 - `LZ4_USER_MEMORY_FUNCTIONS` : replace calls to `<stdlib,h>`'s `malloc()`, `calloc()` and `free()`
   by user-defined functions, which must be named `LZ4_malloc()`, `LZ4_calloc()` and `LZ4_free()`.
@@ -131,8 +115,6 @@ The following build macro can be selected to adjust source code behavior at comp
   (embedded, bootloader, etc).
   For more details, see description of this macro in `lib/lz4.h`.
 
-========
->>>>>>>> Source/main:External/LZ4/lz4-1.9.3/lib/README.md
 
 
 #### Amalgamation

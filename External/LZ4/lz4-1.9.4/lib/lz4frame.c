@@ -63,31 +63,6 @@
 
 
 /*-************************************
-<<<<<<<< HEAD:External/LZ4/lz4-1.9.4/lib/lz4frame.c
-========
-*  Memory routines
-**************************************/
-/*
- * User may redirect invocations of
- * malloc(), calloc() and free()
- * towards another library or solution of their choice
- * by modifying below section.
- */
-#ifndef LZ4_SRC_INCLUDED   /* avoid redefinition when sources are coalesced */
-#  include <stdlib.h>   /* malloc, calloc, free */
-#  define ALLOC(s)          malloc(s)
-#  define ALLOC_AND_ZERO(s) calloc(1,(s))
-#  define FREEMEM(p)        free(p)
-#endif
-
-#include <string.h>   /* memset, memcpy, memmove */
-#ifndef LZ4_SRC_INCLUDED  /* avoid redefinition when sources are coalesced */
-#  define MEM_INIT(p,v,s)   memset((p),(v),(s))
-#endif
-
-
-/*-************************************
->>>>>>>> Source/main:External/LZ4/lz4-1.9.3/lib/lz4frame.c
 *  Library declarations
 **************************************/
 #define LZ4F_STATIC_LINKING_ONLY
@@ -628,7 +603,6 @@ LZ4F_createCompressionContext_advanced(LZ4F_CustomMem customMem, unsigned versio
  *  The function will provide a pointer to an allocated LZ4F_compressionContext_t object.
  *  If the result LZ4F_errorCode_t is not OK_NoError, there was an error during context creation.
  *  Object can release its memory using LZ4F_freeCompressionContext();
-<<<<<<<< HEAD:External/LZ4/lz4-1.9.4/lib/lz4frame.c
 **/
 LZ4F_errorCode_t
 LZ4F_createCompressionContext(LZ4F_cctx** LZ4F_compressionContextPtr, unsigned version)
@@ -636,18 +610,6 @@ LZ4F_createCompressionContext(LZ4F_cctx** LZ4F_compressionContextPtr, unsigned v
     assert(LZ4F_compressionContextPtr != NULL); /* considered a violation of narrow contract */
     /* in case it nonetheless happen in production */
     RETURN_ERROR_IF(LZ4F_compressionContextPtr == NULL, parameter_null);
-========
- */
-LZ4F_errorCode_t LZ4F_createCompressionContext(LZ4F_cctx** LZ4F_compressionContextPtr, unsigned version)
-{
-    LZ4F_cctx_t* const cctxPtr = (LZ4F_cctx_t*)ALLOC_AND_ZERO(sizeof(LZ4F_cctx_t));
-    if (cctxPtr==NULL) return err0r(LZ4F_ERROR_allocation_failed);
-
-    cctxPtr->version = version;
-    cctxPtr->cStage = 0;   /* Next stage : init stream */
-
-    *LZ4F_compressionContextPtr = cctxPtr;
->>>>>>>> Source/main:External/LZ4/lz4-1.9.3/lib/lz4frame.c
 
     *LZ4F_compressionContextPtr = LZ4F_createCompressionContext_advanced(LZ4F_defaultCMem, version);
     RETURN_ERROR_IF(*LZ4F_compressionContextPtr==NULL, allocation_failed);
@@ -658,15 +620,9 @@ LZ4F_errorCode_t LZ4F_createCompressionContext(LZ4F_cctx** LZ4F_compressionConte
 LZ4F_errorCode_t LZ4F_freeCompressionContext(LZ4F_cctx* cctxPtr)
 {
     if (cctxPtr != NULL) {  /* support free on NULL */
-<<<<<<<< HEAD:External/LZ4/lz4-1.9.4/lib/lz4frame.c
        LZ4F_free(cctxPtr->lz4CtxPtr, cctxPtr->cmem);  /* note: LZ4_streamHC_t and LZ4_stream_t are simple POD types */
        LZ4F_free(cctxPtr->tmpBuff, cctxPtr->cmem);
        LZ4F_free(cctxPtr, cctxPtr->cmem);
-========
-       FREEMEM(cctxPtr->lz4CtxPtr);  /* note: LZ4_streamHC_t and LZ4_stream_t are simple POD types */
-       FREEMEM(cctxPtr->tmpBuff);
-       FREEMEM(cctxPtr);
->>>>>>>> Source/main:External/LZ4/lz4-1.9.3/lib/lz4frame.c
     }
     return LZ4F_OK_NoError;
 }
@@ -873,7 +829,6 @@ static size_t LZ4F_makeBlock(void* dst,
                              LZ4F_blockChecksum_t crcFlag)
 {
     BYTE* const cSizePtr = (BYTE*)dst;
-<<<<<<<< HEAD:External/LZ4/lz4-1.9.4/lib/lz4frame.c
     U32 cSize;
     assert(compress != NULL);
     cSize = (U32)compress(lz4ctx, (const char*)src, (char*)(cSizePtr+BHSize),
@@ -881,13 +836,6 @@ static size_t LZ4F_makeBlock(void* dst,
                           level, cdict);
 
     if (cSize == 0 || cSize >= srcSize) {
-========
-    U32 cSize = (U32)compress(lz4ctx, (const char*)src, (char*)(cSizePtr+BHSize),
-                                      (int)(srcSize), (int)(srcSize-1),
-                                      level, cdict);
-    if (cSize == 0) {  /* compression failed */
-        DEBUGLOG(5, "LZ4F_makeBlock: compression failed, creating a raw block (size %u)", (U32)srcSize);
->>>>>>>> Source/main:External/LZ4/lz4-1.9.3/lib/lz4frame.c
         cSize = (U32)srcSize;
         LZ4F_writeLE32(cSizePtr, cSize | LZ4F_BLOCKUNCOMPRESSED_FLAG);
         memcpy(cSizePtr+BHSize, src, srcSize);
@@ -1209,11 +1157,7 @@ size_t LZ4F_compressEnd(LZ4F_cctx* cctxPtr,
 
     size_t const flushSize = LZ4F_flush(cctxPtr, dstBuffer, dstCapacity, compressOptionsPtr);
     DEBUGLOG(5,"LZ4F_compressEnd: dstCapacity=%u", (unsigned)dstCapacity);
-<<<<<<<< HEAD:External/LZ4/lz4-1.9.4/lib/lz4frame.c
     FORWARD_IF_ERROR(flushSize);
-========
-    if (LZ4F_isError(flushSize)) return flushSize;
->>>>>>>> Source/main:External/LZ4/lz4-1.9.3/lib/lz4frame.c
     dstPtr += flushSize;
 
     assert(flushSize <= dstCapacity);
@@ -1225,11 +1169,7 @@ size_t LZ4F_compressEnd(LZ4F_cctx* cctxPtr,
 
     if (cctxPtr->prefs.frameInfo.contentChecksumFlag == LZ4F_contentChecksumEnabled) {
         U32 const xxh = XXH32_digest(&(cctxPtr->xxh));
-<<<<<<<< HEAD:External/LZ4/lz4-1.9.4/lib/lz4frame.c
         RETURN_ERROR_IF(dstCapacity < 8, dstMaxSize_tooSmall);
-========
-        if (dstCapacity < 8) return err0r(LZ4F_ERROR_dstMaxSize_tooSmall);
->>>>>>>> Source/main:External/LZ4/lz4-1.9.3/lib/lz4frame.c
         DEBUGLOG(5,"Writing 32-bit content checksum");
         LZ4F_writeLE32(dstPtr, xxh);
         dstPtr+=4;   /* content Checksum */
@@ -1376,11 +1316,7 @@ static size_t LZ4F_decodeHeader(LZ4F_dctx* dctx, const void* src, size_t srcSize
 #ifndef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
     if (LZ4F_readLE32(srcPtr) != LZ4F_MAGICNUMBER) {
         DEBUGLOG(4, "frame header error : unknown magic number");
-<<<<<<<< HEAD:External/LZ4/lz4-1.9.4/lib/lz4frame.c
         RETURN_ERROR(frameType_unknown);
-========
-        return err0r(LZ4F_ERROR_frameType_unknown);
->>>>>>>> Source/main:External/LZ4/lz4-1.9.3/lib/lz4frame.c
     }
 #endif
     dctx->frameInfo.frameType = LZ4F_frame;
@@ -1529,24 +1465,14 @@ LZ4F_errorCode_t LZ4F_getFrameInfo(LZ4F_dctx* dctx,
 
 /* LZ4F_updateDict() :
  * only used for LZ4F_blockLinked mode
-<<<<<<<< HEAD:External/LZ4/lz4-1.9.4/lib/lz4frame.c
  * Condition : @dstPtr != NULL
-========
- * Condition : dstPtr != NULL
->>>>>>>> Source/main:External/LZ4/lz4-1.9.3/lib/lz4frame.c
  */
 static void LZ4F_updateDict(LZ4F_dctx* dctx,
                       const BYTE* dstPtr, size_t dstSize, const BYTE* dstBufferStart,
                       unsigned withinTmp)
 {
     assert(dstPtr != NULL);
-<<<<<<<< HEAD:External/LZ4/lz4-1.9.4/lib/lz4frame.c
     if (dctx->dictSize==0) dctx->dict = (const BYTE*)dstPtr;  /* will lead to prefix mode */
-========
-    if (dctx->dictSize==0) {
-        dctx->dict = (const BYTE*)dstPtr;   /* priority to prefix mode */
-    }
->>>>>>>> Source/main:External/LZ4/lz4-1.9.3/lib/lz4frame.c
     assert(dctx->dict != NULL);
 
     if (dctx->dict + dctx->dictSize == dstPtr) {  /* prefix mode, everything within dstBuffer */
@@ -1652,10 +1578,7 @@ size_t LZ4F_decompress(LZ4F_dctx* dctx,
     *srcSizePtr = 0;
     *dstSizePtr = 0;
     assert(dctx != NULL);
-<<<<<<<< HEAD:External/LZ4/lz4-1.9.4/lib/lz4frame.c
     dctx->skipChecksum |= (decompressOptionsPtr->skipChecksums != 0); /* once set, disable for the remainder of the frame */
-========
->>>>>>>> Source/main:External/LZ4/lz4-1.9.3/lib/lz4frame.c
 
     /* behaves as a state machine */
 
@@ -1755,11 +1678,7 @@ size_t LZ4F_decompress(LZ4F_dctx* dctx,
                     break;
                 }
                 if (nextCBlockSize > dctx->maxBlockSize) {
-<<<<<<<< HEAD:External/LZ4/lz4-1.9.4/lib/lz4frame.c
                     RETURN_ERROR(maxBlockSize_invalid);
-========
-                    return err0r(LZ4F_ERROR_maxBlockSize_invalid);
->>>>>>>> Source/main:External/LZ4/lz4-1.9.3/lib/lz4frame.c
                 }
                 if (blockHeader & LZ4F_BLOCKUNCOMPRESSED_FLAG) {
                     /* next block is uncompressed */
@@ -1790,7 +1709,6 @@ size_t LZ4F_decompress(LZ4F_dctx* dctx,
                     size_t const minBuffSize = MIN((size_t)(srcEnd-srcPtr), (size_t)(dstEnd-dstPtr));
                     sizeToCopy = MIN(dctx->tmpInTarget, minBuffSize);
                     memcpy(dstPtr, srcPtr, sizeToCopy);
-<<<<<<<< HEAD:External/LZ4/lz4-1.9.4/lib/lz4frame.c
                     if (!dctx->skipChecksum) {
                         if (dctx->frameInfo.blockChecksumFlag) {
                             (void)XXH32_update(&dctx->blockChecksum, srcPtr, sizeToCopy);
@@ -1798,13 +1716,6 @@ size_t LZ4F_decompress(LZ4F_dctx* dctx,
                         if (dctx->frameInfo.contentChecksumFlag)
                             (void)XXH32_update(&dctx->xxh, srcPtr, sizeToCopy);
                     }
-========
-                    if (dctx->frameInfo.blockChecksumFlag) {
-                        (void)XXH32_update(&dctx->blockChecksum, srcPtr, sizeToCopy);
-                    }
-                    if (dctx->frameInfo.contentChecksumFlag)
-                        (void)XXH32_update(&dctx->xxh, srcPtr, sizeToCopy);
->>>>>>>> Source/main:External/LZ4/lz4-1.9.3/lib/lz4frame.c
                     if (dctx->frameInfo.contentSize)
                         dctx->frameRemainingSize -= sizeToCopy;
 
@@ -1858,11 +1769,7 @@ size_t LZ4F_decompress(LZ4F_dctx* dctx,
                     if (readCRC != calcCRC) {
                         DEBUGLOG(4, "incorrect block checksum: %08X != %08X",
                                 readCRC, calcCRC);
-<<<<<<<< HEAD:External/LZ4/lz4-1.9.4/lib/lz4frame.c
                         RETURN_ERROR(blockChecksum_invalid);
-========
-                        return err0r(LZ4F_ERROR_blockChecksum_invalid);
->>>>>>>> Source/main:External/LZ4/lz4-1.9.3/lib/lz4frame.c
                     }
 #else
                     (void)readCRC;

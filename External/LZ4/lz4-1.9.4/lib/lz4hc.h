@@ -198,7 +198,6 @@ LZ4LIB_API int LZ4_saveDictHC (LZ4_streamHC_t* streamHCPtr, char* safeBuffer, in
 #define LZ4HC_HASH_MASK (LZ4HC_HASHTABLESIZE - 1)
 
 
-<<<<<<<< HEAD:External/LZ4/lz4-1.9.4/lib/lz4hc.h
 /* Never ever use these definitions directly !
  * Declare or allocate an LZ4_streamHC_t instead.
 **/
@@ -223,34 +222,6 @@ struct LZ4HC_CCtx_internal
 #define LZ4_STREAMHC_MINSIZE  262200  /* static size, for inter-version compatibility */
 union LZ4_streamHC_u {
     char minStateSize[LZ4_STREAMHC_MINSIZE];
-========
-typedef struct LZ4HC_CCtx_internal LZ4HC_CCtx_internal;
-struct LZ4HC_CCtx_internal
-{
-    LZ4_u32   hashTable[LZ4HC_HASHTABLESIZE];
-    LZ4_u16   chainTable[LZ4HC_MAXD];
-    const LZ4_byte* end;       /* next block here to continue on current prefix */
-    const LZ4_byte* base;      /* All index relative to this position */
-    const LZ4_byte* dictBase;  /* alternate base for extDict */
-    LZ4_u32   dictLimit;       /* below that point, need extDict */
-    LZ4_u32   lowLimit;        /* below that point, no more dict */
-    LZ4_u32   nextToUpdate;    /* index from which to continue dictionary update */
-    short     compressionLevel;
-    LZ4_i8    favorDecSpeed;   /* favor decompression speed if this flag set,
-                                  otherwise, favor compression ratio */
-    LZ4_i8    dirty;           /* stream has to be fully reset if this flag is set */
-    const LZ4HC_CCtx_internal* dictCtx;
-};
-
-
-/* Do not use these definitions directly !
- * Declare or allocate an LZ4_streamHC_t instead.
- */
-#define LZ4_STREAMHCSIZE       262200  /* static size, for inter-version compatibility */
-#define LZ4_STREAMHCSIZE_VOIDP (LZ4_STREAMHCSIZE / sizeof(void*))
-union LZ4_streamHC_u {
-    void* table[LZ4_STREAMHCSIZE_VOIDP];
->>>>>>>> Source/main:External/LZ4/lz4-1.9.3/lib/lz4hc.h
     LZ4HC_CCtx_internal internal_donotuse;
 }; /* previously typedef'd to LZ4_streamHC_t */
 

@@ -394,13 +394,8 @@ LZ4HC_InsertAndGetWiderMatch (
                                     if (lookBackLength==0) {  /* no back possible */
                                         size_t const maxML = MIN(currentSegmentLength, srcPatternLength);
                                         if ((size_t)longest < maxML) {
-<<<<<<<< HEAD:External/LZ4/lz4-1.9.4/lib/lz4hc.c
                                             assert(prefixPtr - prefixIdx + matchIndex != ip);
                                             if ((size_t)(ip - prefixPtr) + prefixIdx - matchIndex > LZ4_DISTANCE_MAX) break;
-========
-                                            assert(base + matchIndex != ip);
-                                            if ((size_t)(ip - base) - matchIndex > LZ4_DISTANCE_MAX) break;
->>>>>>>> Source/main:External/LZ4/lz4-1.9.3/lib/lz4hc.c
                                             assert(maxML < 2 GB);
                                             longest = (int)maxML;
                                             *matchpos = prefixPtr - prefixIdx + matchIndex;   /* virtual pos, relative to ip, to retrieve offset */
@@ -1016,11 +1011,6 @@ int LZ4_freeStreamHC (LZ4_streamHC_t* LZ4_streamHCPtr)
 LZ4_streamHC_t* LZ4_initStreamHC (void* buffer, size_t size)
 {
     LZ4_streamHC_t* const LZ4_streamHCPtr = (LZ4_streamHC_t*)buffer;
-<<<<<<<< HEAD:External/LZ4/lz4-1.9.4/lib/lz4hc.c
-========
-    /* if compilation fails here, LZ4_STREAMHCSIZE must be increased */
-    LZ4_STATIC_ASSERT(sizeof(LZ4HC_CCtx_internal) <= LZ4_STREAMHCSIZE);
->>>>>>>> Source/main:External/LZ4/lz4-1.9.3/lib/lz4hc.c
     DEBUGLOG(4, "LZ4_initStreamHC(%p, %u)", buffer, (unsigned)size);
     /* check conditions */
     if (buffer == NULL) return NULL;
@@ -1148,18 +1138,12 @@ LZ4_compressHC_continue_generic (LZ4_streamHC_t* LZ4_streamHCPtr,
         const BYTE* const dictEnd   = ctxPtr->dictStart + (ctxPtr->dictLimit - ctxPtr->lowLimit);
         if ((sourceEnd > dictBegin) && ((const BYTE*)src < dictEnd)) {
             if (sourceEnd > dictEnd) sourceEnd = dictEnd;
-<<<<<<<< HEAD:External/LZ4/lz4-1.9.4/lib/lz4hc.c
             ctxPtr->lowLimit += (U32)(sourceEnd - ctxPtr->dictStart);
             ctxPtr->dictStart += (U32)(sourceEnd - ctxPtr->dictStart);
             if (ctxPtr->dictLimit - ctxPtr->lowLimit < 4) {
                 ctxPtr->lowLimit = ctxPtr->dictLimit;
                 ctxPtr->dictStart = ctxPtr->prefixStart;
     }   }   }
-========
-            ctxPtr->lowLimit = (U32)(sourceEnd - ctxPtr->dictBase);
-            if (ctxPtr->dictLimit - ctxPtr->lowLimit < 4) ctxPtr->lowLimit = ctxPtr->dictLimit;
-    }   }
->>>>>>>> Source/main:External/LZ4/lz4-1.9.3/lib/lz4hc.c
 
     return LZ4HC_compress_generic (ctxPtr, src, dst, srcSizePtr, dstCapacity, ctxPtr->compressionLevel, limit);
 }
@@ -1187,11 +1171,7 @@ int LZ4_compress_HC_continue_destSize (LZ4_streamHC_t* LZ4_streamHCPtr, const ch
 int LZ4_saveDictHC (LZ4_streamHC_t* LZ4_streamHCPtr, char* safeBuffer, int dictSize)
 {
     LZ4HC_CCtx_internal* const streamPtr = &LZ4_streamHCPtr->internal_donotuse;
-<<<<<<<< HEAD:External/LZ4/lz4-1.9.4/lib/lz4hc.c
     int const prefixSize = (int)(streamPtr->end - streamPtr->prefixStart);
-========
-    int const prefixSize = (int)(streamPtr->end - (streamPtr->base + streamPtr->dictLimit));
->>>>>>>> Source/main:External/LZ4/lz4-1.9.3/lib/lz4hc.c
     DEBUGLOG(5, "LZ4_saveDictHC(%p, %p, %d)", LZ4_streamHCPtr, safeBuffer, dictSize);
     assert(prefixSize >= 0);
     if (dictSize > 64 KB) dictSize = 64 KB;
@@ -1199,21 +1179,13 @@ int LZ4_saveDictHC (LZ4_streamHC_t* LZ4_streamHCPtr, char* safeBuffer, int dictS
     if (dictSize > prefixSize) dictSize = prefixSize;
     if (safeBuffer == NULL) assert(dictSize == 0);
     if (dictSize > 0)
-<<<<<<<< HEAD:External/LZ4/lz4-1.9.4/lib/lz4hc.c
         LZ4_memmove(safeBuffer, streamPtr->end - dictSize, dictSize);
     {   U32 const endIndex = (U32)(streamPtr->end - streamPtr->prefixStart) + streamPtr->dictLimit;
-========
-        memmove(safeBuffer, streamPtr->end - dictSize, dictSize);
-    {   U32 const endIndex = (U32)(streamPtr->end - streamPtr->base);
->>>>>>>> Source/main:External/LZ4/lz4-1.9.3/lib/lz4hc.c
         streamPtr->end = (const BYTE*)safeBuffer + dictSize;
         streamPtr->prefixStart = streamPtr->end - dictSize;
         streamPtr->dictLimit = endIndex - (U32)dictSize;
         streamPtr->lowLimit = endIndex - (U32)dictSize;
-<<<<<<<< HEAD:External/LZ4/lz4-1.9.4/lib/lz4hc.c
         streamPtr->dictStart = streamPtr->prefixStart;
-========
->>>>>>>> Source/main:External/LZ4/lz4-1.9.3/lib/lz4hc.c
         if (streamPtr->nextToUpdate < streamPtr->dictLimit)
             streamPtr->nextToUpdate = streamPtr->dictLimit;
     }
@@ -1369,11 +1341,7 @@ static int LZ4HC_compress_optimal ( LZ4HC_CCtx_internal* ctx,
 {
     int retval = 0;
 #define TRAILING_LITERALS 3
-<<<<<<<< HEAD:External/LZ4/lz4-1.9.4/lib/lz4hc.c
 #if defined(LZ4HC_HEAPMODE) && LZ4HC_HEAPMODE==1
-========
-#ifdef LZ4HC_HEAPMODE
->>>>>>>> Source/main:External/LZ4/lz4-1.9.3/lib/lz4hc.c
     LZ4HC_optimal_t* const opt = (LZ4HC_optimal_t*)ALLOC(sizeof(LZ4HC_optimal_t) * (LZ4_OPT_NUM + TRAILING_LITERALS));
 #else
     LZ4HC_optimal_t opt[LZ4_OPT_NUM + TRAILING_LITERALS];   /* ~64 KB, which is a bit large for stack... */
@@ -1391,11 +1359,7 @@ static int LZ4HC_compress_optimal ( LZ4HC_CCtx_internal* ctx,
     const BYTE* ovref = NULL;
 
     /* init */
-<<<<<<<< HEAD:External/LZ4/lz4-1.9.4/lib/lz4hc.c
 #if defined(LZ4HC_HEAPMODE) && LZ4HC_HEAPMODE==1
-========
-#ifdef LZ4HC_HEAPMODE
->>>>>>>> Source/main:External/LZ4/lz4-1.9.3/lib/lz4hc.c
     if (opt == NULL) goto _return_label;
 #endif
     DEBUGLOG(5, "LZ4HC_compress_optimal(dst=%p, dstCapa=%u)", dst, (unsigned)dstCapacity);
@@ -1660,11 +1624,7 @@ if (limit == fillOutput) {
      goto _last_literals;
 }
 _return_label:
-<<<<<<<< HEAD:External/LZ4/lz4-1.9.4/lib/lz4hc.c
 #if defined(LZ4HC_HEAPMODE) && LZ4HC_HEAPMODE==1
-========
-#ifdef LZ4HC_HEAPMODE
->>>>>>>> Source/main:External/LZ4/lz4-1.9.3/lib/lz4hc.c
      FREEMEM(opt);
 #endif
      return retval;
